@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="res/favicon.png" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js" integrity="sha512-ElRFoEQdI5Ht6kZvyzXhYG9NqjtkmlkfYk0wr6wHxU9JEHakS7UJZNeml5ALk+8IKlU6jDgMabC3vkumRokgJA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/2.0.1/chartjs-plugin-annotation.min.js"></script> 
+    <link rel="stylesheet" href="res/dep/icn/weather-icons.css">
+    <link rel="stylesheet" href="res/styles.css">
+    <meta name="robots" content="noindex">
+    <title>Météo</title>
+  </head>
+  <body>
+    <div>
+      <div>
+        <form action="">
+          <input list="cities" name="city" id="city" onChange="ChangeSelect(this)" placeholder="Selectionner une ville"/>
+          <datalist id="cities">
+            <option data-value='{"long":"43.5263", "lat":"5.4454"}' value="Aix-en-Provence"/>
+            <option data-value='{"long":"41.9267", "lat":"8.7369"}' value="Ajaccio"/>
+            <option data-value='{"long":"43.9289", "lat":"2.1464"}' value="Albi"/>
+            <option data-value='{"long":"44.1281", "lat":"4.0817"}' value="Alès"/>
+            <option data-value='{"long":"48.805", "lat":"2.4239"}' value="Alfortville"/>
+            <option data-value='{"long":"49.892", "lat":"2.299"}' value="Amiens"/>
+            <option data-value='{"long":"47.4736", "lat":"-0.5542"}' value="Angers"/>
+            <option data-value='{"long":"43.485", "lat":"-1.5183"}' value="Anglet"/>
+            <option data-value='{"long":"45.65", "lat":"0.16"}' value="Angoulême"/>
+            <option data-value='{"long":"45.916", "lat":"6.133"}' value="Annecy"/>
+            <option data-value='{"long":"46.1958", "lat":"6.2364"}' value="Annemasse"/>
+            <option data-value='{"long":"43.5808", "lat":"7.1239"}' value="Antibes"/>
+            <option data-value='{"long":"48.7539", "lat":"2.2975"}' value="Antony"/>
+            <option data-value='{"long":"48.95", "lat":"2.25"}' value="Argenteuil"/>
+            <option data-value='{"long":"43.6767", "lat":"4.6278"}' value="Arles"/>
+            <option data-value='{"long":"50.292", "lat":"2.78"}' value="Arras"/>
+            <option data-value='{"long":"43.2908", "lat":"5.5708"}' value="Aubagne"/>
+            <option data-value='{"long":"48.9131", "lat":"2.3831"}' value="Aubervilliers"/>
+            <option data-value='{"long":"48.9386", "lat":"2.4906"}' value="Aulnay-sous-Bois"/>
+            <option data-value='{"long":"43.95", "lat":"4.8075"}' value="Avignon"/>
+            <option data-value='{"long":"48.7983", "lat":"2.3137"}' value="Bagneux"/>
+            <option data-value='{"long":"48.8692", "lat":"2.4181"}' value="Bagnolet"/>
+            <option data-value='{"long":"42.7008", "lat":"9.4503"}' value="Bastia"/>
+            <option data-value='{"long":"43.49", "lat":"-1.48"}' value="Bayonne"/>
+            <option data-value='{"long":"49.4303", "lat":"2.0952"}' value="Beauvais"/>
+            <option data-value='{"long":"47.64", "lat":"6.85"}' value="Belfort"/>
+            <option data-value='{"long":"47.24", "lat":"6.02"}' value="Besançon"/>
+            <option data-value='{"long":"43.3476", "lat":"3.219"}' value="Béziers"/>
+            <option data-value='{"long":"47.5939", "lat":"1.3281"}' value="Blois"/>
+            <option data-value='{"long":"48.9106", "lat":"2.4397"}' value="Bobigny"/>
+            <option data-value='{"long":"48.9022", "lat":"2.4828"}' value="Bondy"/>
+            <option data-value='{"long":"44.84", "lat":"-0.58"}' value="Bordeaux"/>
+            <option data-value='{"long":"48.8352", "lat":"2.2409"}' value="Boulogne-Billancourt"/>
+            <option data-value='{"long":"50.7264", "lat":"1.6147"}' value="Boulogne-sur-Mer"/>
+            <option data-value='{"long":"46.2056", "lat":"5.2289"}' value="Bourg-en-Bresse"/>
+            <option data-value='{"long":"47.0844", "lat":"2.3964"}' value="Bourges"/>
+            <option data-value='{"long":"48.39", "lat":"-4.49"}' value="Brest"/>
+            <option data-value='{"long":"45.1583", "lat":"1.5321"}' value="Brive-la-Gaillarde"/>
+            <option data-value='{"long":"45.7394", "lat":"4.9139"}' value="Bron"/>
+            <option data-value='{"long":"49.18", "lat":"-0.37"}' value="Caen"/>
+            <option data-value='{"long":"43.6644", "lat":"7.1489"}' value="Cagnes-sur-Mer"/>
+            <option data-value='{"long":"50.9481", "lat":"1.8564"}' value="Calais"/>
+            <option data-value='{"long":"45.7953", "lat":"4.8472"}' value="Caluire-et-Cuire"/>
+            <option data-value='{"long":"43.5513", "lat":"7.0128"}' value="Cannes"/>
+            <option data-value='{"long":"43.21", "lat":"2.35"}' value="Carcassonne"/>
+            <option data-value='{"long":"48.9108", "lat":"2.2889"}' value="Carrières-sur-Seine"/>
+            <option data-value='{"long":"43.6", "lat":"2.25"}' value="Castres"/>
+            <option data-value='{"long":"49.0361", "lat":"2.0631"}' value="Cergy"/>
+            <option data-value='{"long":"46.7806", "lat":"4.8528"}' value="Chalon-sur-Saône"/>
+            <option data-value='{"long":"48.9575", "lat":"4.365"}' value="Châlons-en-Champagne"/>
+            <option data-value='{"long":"45.57", "lat":"5.9118"}' value="Chambéry"/>
+            <option data-value='{"long":"48.8172", "lat":"2.5156"}' value="Champigny-sur-Marne"/>
+            <option data-value='{"long":"49.7719", "lat":"4.7161"}' value="Charleville-Mézières"/>
+            <option data-value='{"long":"48.456", "lat":"1.484"}' value="Chartres"/>
+            <option data-value='{"long":"46.8103", "lat":"1.6911"}' value="Châteauroux"/>
+            <option data-value='{"long":"48.8", "lat":"2.29"}' value="Châtillon"/>
+            <option data-value='{"long":"48.8833", "lat":"2.6"}' value="Chelles"/>
+            <option data-value='{"long":"49.6333", "lat":"-1.6"}' value="Cherbourg"/>
+            <option data-value='{"long":"48.763", "lat":"2.409"}' value="Choisy-le-Roi"/>
+            <option data-value='{"long":"47.06", "lat":"-0.8783"}' value="Cholet"/>
+            <option data-value='{"long":"48.8014", "lat":"2.2628"}' value="Clamart"/>
+            <option data-value='{"long":"45.7831", "lat":"3.0824"}' value="Clermont-Ferrand"/>
+            <option data-value='{"long":"48.9044", "lat":"2.3064"}' value="Clichy"/>
+            <option data-value='{"long":"48.0817", "lat":"7.3556"}' value="Colmar"/>
+            <option data-value='{"long":"48.9236", "lat":"2.2522"}' value="Colombes"/>
+            <option data-value='{"long":"43.6139", "lat":"1.3367"}' value="Colomiers"/>
+            <option data-value='{"long":"49.4149", "lat":"2.8231"}' value="Compiègne"/>
+            <option data-value='{"long":"48.9992", "lat":"2.0983"}' value="Conflans-Sainte-Honorine"/>
+            <option data-value='{"long":"48.6139", "lat":"2.482"}' value="Corbeil-Essonnes"/>
+            <option data-value='{"long":"48.8978", "lat":"2.2531"}' value="Courbevoic"/>
+            <option data-value='{"long":"48.6239", "lat":"2.4294"}' value="Courcouronnes"/>
+            <option data-value='{"long":"49.2583", "lat":"2.4833"}' value="Creil"/>
+            <option data-value='{"long":"48.7911", "lat":"2.4628"}' value="Créteil"/>
+            <option data-value='{"long":"47.3167", "lat":"5.0167"}' value="Dijon"/>
+            <option data-value='{"long":"50.3714", "lat":"3.08"}' value="Douai"/>
+            <option data-value='{"long":"43.5403", "lat":"6.4667"}' value="Draguignan"/>
+            <option data-value='{"long":"48.93", "lat":"2.45"}' value="Drancy"/>
+            <option data-value='{"long":"51.0383", "lat":"2.3775"}' value="Dunkerque"/>
+            <option data-value='{"long":"45.1436", "lat":"5.7183"}' value="Échirolles"/>
+            <option data-value='{"long":"48.1744", "lat":"6.4512"}' value="Épinal"/>
+            <option data-value='{"long":"48.9553", "lat":"2.3092"}' value="Épinay-sur-Seine"/>
+            <option data-value='{"long":"49.02", "lat":"1.15"}' value="Évreux"/>
+            <option data-value='{"long":"48.6239", "lat":"2.4294"}' value="Évry"/>
+            <option data-value='{"long":"48.8517", "lat":"2.4772"}' value="Fontenay-sous-Bois"/>
+            <option data-value='{"long":"48.9889", "lat":"2.2314"}' value="Franconville"/>
+            <option data-value='{"long":"43.433", "lat":"6.737"}' value="Fréjus"/>
+            <option data-value='{"long":"48.8833", "lat":"2.5333"}' value="Gagny"/>
+            <option data-value='{"long":"44.5594", "lat":"6.0786"}' value="Gap"/>
+            <option data-value='{"long":"48.9728", "lat":"2.4008"}' value="Garges-lès-Gonesse"/>
+            <option data-value='{"long":"48.9333", "lat":"2.3"}' value="Gennevilliers"/>
+            <option data-value='{"long":"43.6667", "lat":"6.9167"}' value="Grasse"/>
+            <option data-value='{"long":"45.1715", "lat":"5.7224"}' value="Grenoble"/>
+            <option data-value='{"long":"43.1199", "lat":"6.1316"}' value="Hyères"/>
+            <option data-value='{"long":"48.8239", "lat":"2.27"}' value="Issy-les-Moulineaux"/>
+            <option data-value='{"long":"43.5151", "lat":"4.9895"}' value="Istres"/>
+            <option data-value='{"long":"48.8078", "lat":"2.3747"}' value="Ivry-sur-Seine"/>
+            <option data-value='{"long":"47.3514", "lat":"0.6625"}' value="Joué-lés-Tours"/>
+            <option data-value='{"long":"48.9322", "lat":"2.3967"}' value="La Courneuve"/>
+            <option data-value='{"long":"46.6705", "lat":"-1.426"}' value="La Roche-sur-Yon"/>
+            <option data-value='{"long":"46.1591", "lat":"-1.1517"}' value="La Rochelle"/>
+            <option data-value='{"long":"43.1", "lat":"5.883"}' value="La Seyne-sur-Mer"/>
+            <option data-value='{"long":"48.0733", "lat":"-0.7689"}' value="Laval"/>
+            <option data-value='{"long":"48.9387", "lat":"2.4614"}' value="Le Blanc-Mesnil"/>
+            <option data-value='{"long":"43.5769", "lat":"7.0194"}' value="Le Cannet"/>
+            <option data-value='{"long":"49.49", "lat":"0.1"}' value="Le Havre"/>
+            <option data-value='{"long":"48.0077", "lat":"0.1984"}' value="Le Mans"/>
+            <option data-value='{"long":"46.4972", "lat":"-1.7833"}' value="Les Sables-d’Olonne"/>
+            <option data-value='{"long":"48.895", "lat":"2.2872"}' value="Levallois-Perret"/>
+            <option data-value='{"long":"50.6278", "lat":"3.0583"}' value="Lille"/>
+            <option data-value='{"long":"45.8353", "lat":"1.2625"}' value="Limoges"/>
+            <option data-value='{"long":"48.9192", "lat":"2.5361"}' value="Livry-Gargan"/>
+            <option data-value='{"long":"47.75", "lat":"-3.36"}' value="Lorient"/>
+            <option data-value='{"long":"45.76", "lat":"4.84"}' value="Lyon"/>
+            <option data-value='{"long":"48.8058", "lat":"2.4378"}' value="Maisons-Alfort"/>
+            <option data-value='{"long":"48.9908", "lat":"1.7172"}' value="Mantes-la-Jolie"/>
+            <option data-value='{"long":"50.6711", "lat":"3.0972"}' value="Marcq-en-Baroeul"/>
+            <option data-value='{"long":"43.2964", "lat":"5.37"}' value="Marseille"/>
+            <option data-value='{"long":"43.4053", "lat":"5.0475"}' value="Martigues"/>
+            <option data-value='{"long":"48.7309", "lat":"2.2713"}' value="Massy"/>
+            <option data-value='{"long":"48.9603", "lat":"2.8883"}' value="Meaux"/>
+            <option data-value='{"long":"48.5406", "lat":"2.66"}' value="Melun"/>
+            <option data-value='{"long":"44.8386", "lat":"-0.6436"}' value="Mérignac"/>
+            <option data-value='{"long":"49.1203", "lat":"6.1778"}' value="Metz"/>
+            <option data-value='{"long":"48.8123", "lat":"2.2382"}' value="Meudon"/>
+            <option data-value='{"long":"44.0181", "lat":"1.3558"}' value="Montauban"/>
+            <option data-value='{"long":"44.5581", "lat":"4.7508"}' value="Montélimar"/>
+            <option data-value='{"long":"43.6119", "lat":"3.8772"}' value="Montpellier"/>
+            <option data-value='{"long":"48.8611", "lat":"2.4436"}' value="Montreuil"/>
+            <option data-value='{"long":"48.8172", "lat":"2.3219"}' value="Montrouge"/>
+            <option data-value='{"long":"47.75", "lat":"7.34"}' value="Mulhouse"/>
+            <option data-value='{"long":"48.6936", "lat":"6.1846"}' value="Nancy"/>
+            <option data-value='{"long":"48.8988", "lat":"2.1969"}' value="Nanterre"/>
+            <option data-value='{"long":"47.2181", "lat":"-1.5528"}' value="Nantes"/>
+            <option data-value='{"long":"43.1836", "lat":"3.0042"}' value="Narbonne"/>
+            <option data-value='{"long":"48.8881", "lat":"2.2686"}' value="Neuilly-sur-Seine"/>
+            <option data-value='{"long":"43.7034", "lat":"7.2663"}' value="Nice"/>
+            <option data-value='{"long":"43.838", "lat":"4.361"}' value="Nîmes"/>
+            <option data-value='{"long":"46.3258", "lat":"-0.4606"}' value="Niort"/>
+            <option data-value='{"long":"48.8478", "lat":"2.5528"}' value="Noisy-le-Grand"/>
+            <option data-value='{"long":"48.8894", "lat":"2.4503"}' value="Noisy-le-Sec"/>
+            <option data-value='{"long":"47.9025", "lat":"1.909"}' value="Orléans"/>
+            <option data-value='{"long":"48.8966", "lat":"2.4017"}' value="Pantin"/>
+            <option data-value='{"long":"48.8566", "lat":"2.3522"}' value="Paris"/>
+            <option data-value='{"long":"43.3", "lat":"-0.37"}' value="Pau"/>
+            <option data-value='{"long":"42.6986", "lat":"2.8956"}' value="Perpignan"/>
+            <option data-value='{"long":"44.8067", "lat":"-0.6311"}' value="Pessac"/>
+            <option data-value='{"long":"48.9294", "lat":"2.0456"}' value="Poissy"/>
+            <option data-value='{"long":"46.58", "lat":"0.34"}' value="Poitiers"/>
+            <option data-value='{"long":"48.885", "lat":"2.2389"}' value="Puteaux"/>
+            <option data-value='{"long":"47.9967", "lat":"-4.0964"}' value="Quimper"/>
+            <option data-value='{"long":"49.2628", "lat":"4.0347"}' value="Reims"/>
+            <option data-value='{"long":"48.1147", "lat":"-1.6794"}' value="Rennes"/>
+            <option data-value='{"long":"47.1833", "lat":"-1.55"}' value="Rezé"/>
+            <option data-value='{"long":"48.8667", "lat":"2.4833"}' value="Rosny-sous-Bois"/>
+            <option data-value='{"long":"50.6901", "lat":"3.1817"}' value="Roubaix"/>
+            <option data-value='{"long":"49.4428", "lat":"1.0886"}' value="Rouen"/>
+            <option data-value='{"long":"48.876", "lat":"2.181"}' value="Rueil-Malmaison"/>
+            <option data-value='{"long":"48.5136", "lat":"-2.7653"}' value="Saint-Brieuc"/>
+            <option data-value='{"long":"48.9356", "lat":"2.3539"}' value="Saint-Denis"/>
+            <option data-value='{"long":"45.4347", "lat":"4.3903"}' value="Saint-Étienne"/>
+            <option data-value='{"long":"48.8989", "lat":"2.0938"}' value="Saint-Germain-en-Laye"/>
+            <option data-value='{"long":"47.2122", "lat":"-1.6497"}' value="Saint-Herblain"/>
+            <option data-value='{"long":"48.6481", "lat":"-2.0075"}' value="Saint-Malo"/>
+            <option data-value='{"long":"45.1672", "lat":"5.7653"}' value="Saint-Martin-d’Hères"/>
+            <option data-value='{"long":"48.7994", "lat":"2.4997"}' value="Saint-Maur-des-Fossés"/>
+            <option data-value='{"long":"47.2806", "lat":"-2.2086"}' value="Saint-Nazaire"/>
+            <option data-value='{"long":"48.9123", "lat":"2.3342"}' value="Saint-Ouen"/>
+            <option data-value='{"long":"45.6972", "lat":"4.9447"}' value="Saint-Priest"/>
+            <option data-value='{"long":"49.8486", "lat":"3.2864"}' value="Saint-Quentin"/>
+            <option data-value='{"long":"48.6369", "lat":"2.3403"}' value="Sainte-Geneviève-des-Bois"/>
+            <option data-value='{"long":"43.6406", "lat":"5.0972"}' value="Salon-de-Provence"/>
+            <option data-value='{"long":"48.9956", "lat":"2.3808"}' value="Sarcelles"/>
+            <option data-value='{"long":"48.9372", "lat":"2.1644"}' value="Sartrouville"/>
+            <option data-value='{"long":"48.6797", "lat":"2.3457"}' value="Savigny-sur-Orge"/>
+            <option data-value='{"long":"43.4053", "lat":"3.6975"}' value="Sète"/>
+            <option data-value='{"long":"48.9333", "lat":"2.5333"}' value="Sevran"/>
+            <option data-value='{"long":"48.95", "lat":"2.3833"}' value="Stains"/>
+            <option data-value='{"long":"48.5833", "lat":"7.7458"}' value="Strasbourg"/>
+            <option data-value='{"long":"48.87", "lat":"2.22"}' value="Suresnes"/>
+            <option data-value='{"long":"44.8", "lat":"-0.584"}' value="Talence"/>
+            <option data-value='{"long":"43.23", "lat":"0.07"}' value="Tarbes"/>
+            <option data-value='{"long":"49.3589", "lat":"6.1692"}' value="Thionville"/>
+            <option data-value='{"long":"43.1258", "lat":"5.9306"}' value="Toulon"/>
+            <option data-value='{"long":"43.6045", "lat":"1.444"}' value="Toulouse"/>
+            <option data-value='{"long":"50.7239", "lat":"3.1612"}' value="Tourcoing"/>
+            <option data-value='{"long":"47.2436", "lat":"0.6892"}' value="Tours"/>
+            <option data-value='{"long":"48.2997", "lat":"4.0792"}' value="Troyes"/>
+            <option data-value='{"long":"44.9333", "lat":"4.8917"}' value="Valence"/>
+            <option data-value='{"long":"50.358", "lat":"3.5233"}' value="Valenciennes"/>
+            <option data-value='{"long":"47.6559", "lat":"-2.7603"}' value="Vannes"/>
+            <option data-value='{"long":"45.7768", "lat":"4.9186"}' value="Vaulx-en-Velin"/>
+            <option data-value='{"long":"45.6978", "lat":"4.8867"}' value="Vénissieux"/>
+            <option data-value='{"long":"48.8053", "lat":"2.135"}' value="Versailles"/>
+            <option data-value='{"long":"45.9833", "lat":"4.7167"}' value="Villefranche-sur-Saône"/>
+            <option data-value='{"long":"48.7919", "lat":"2.3636"}' value="Villejuif"/>
+            <option data-value='{"long":"48.955", "lat":"2.541"}' value="Villepinte"/>
+            <option data-value='{"long":"45.7667", "lat":"4.8803"}' value="Villeurbanne"/>
+            <option data-value='{"long":"48.8478", "lat":"2.4392"}' value="Vincennes"/>
+            <option data-value='{"long":"48.7875", "lat":"2.3928"}' value="Vitry-sur-Seine"/>
+            <option data-value='{"long":"50.7", "lat":"3.217"}' value="Wattrelos"/>
+          </datalist>
+        </form>
+        <div id="towntp"></div>
+      </div>
+      <div class="cont">
+        <span id="loader" class="loader"></span>
+        <canvas id="myChart" width="1440" height="800"></canvas>
+      </div>
+    </div>
+  </body>
+</html>
+<script>
+
+/*
+** HashCode from Jericho Aquino (https://gist.github.com/eru123)
+*/
+const hashCode = (str) => str.split('').reduce((s, c) => Math.imul(31, s) + c.charCodeAt(0) | 0, 0);
+
+window.addEventListener("load", function() {
+  document.getElementById("city").selectedIndex = 0;
+});
+
+async function ChangeSelect(_this) {
+  if (_this.value.length === 0
+  || document.querySelector(`#cities option[value='${_this.value}']`) === null)
+    return;
+
+  if (myChart !== null)
+    myChart.destroy();
+
+  document.getElementById("loader").style.display = 'inline-block';
+
+  let latlong = document.querySelector(`#cities option[value='${_this.value}']`).dataset.value;
+  
+  if (latlong === null
+  || latlong.length === 0)
+    return;
+
+  let arrLongLat = JSON.parse(latlong);  
+  let strTownHash = hashCode(_this.value);
+  let objLastRec = JSON.parse(localStorage.getItem(strTownHash));
+
+  if (objLastRec === null
+  || Date.now() - parseInt(objLastRec[0]) >= 0) {
+    document.getElementById('towntp').innerHTML = 'Dernière mise à jour : maintenant';
+    const resWeather = await fetch('https://api.open-meteo.com/v1/forecast?latitude=' + arrLongLat['long'] + '&longitude=' + arrLongLat['lat'] + '&hourly=temperature_2m,precipitation,weathercode,cloudcover,windspeed_10m&daily=sunrise,sunset&timezone=Europe%2FParis');
+    let dataWeather = await resWeather.json();
+    const resAir = await fetch('https://air-quality-api.open-meteo.com/v1/air-quality?latitude=' + arrLongLat['long'] + '&longitude=' + arrLongLat['lat'] + '&hourly=uv_index,carbon_monoxide,ozone,dust,pm10,pm2_5,alder_pollen,birch_pollen,grass_pollen,mugwort_pollen,olive_pollen,ragweed_pollen&timezone=Europe%2FParis');
+    let dataAir = await resAir.json();
+
+    var arrData = [];
+    arrData[0] = (Date.now() + 3.6e+6).toString();
+    arrData[1] = dataWeather;
+    arrData[2] = dataAir;
+    localStorage.setItem(strTownHash, JSON.stringify(arrData));
+
+    InitChar(arrData);
+  }
+  else {
+    let deltaMs = Math.abs(Date.now() - parseInt(objLastRec[0]) + 3.6e+6);
+    var totalSeconds = parseInt(Math.floor(deltaMs / 1000), 10);
+    var totalMinutes = parseInt(Math.floor(totalSeconds / 60), 10);
+    var seconds = parseInt(totalSeconds % 60, 10);
+    var minutes = parseInt(totalMinutes % 60, 10);
+    
+    document.getElementById('towntp').innerHTML = `Dernière mise à jour : il y a ${ minutes == 0 ? '' : (minutes == 1 ? '1 minute et' : `${minutes} minutes et`)} ${seconds} secondes`;
+
+    InitChar(objLastRec);
+  }
+
+  _this.placeholder = _this.value;
+  _this.value = "";
+  document.activeElement.blur();
+
+  document.getElementById("loader").style.display = 'none';
+}
+
+var myChart = null;
+function InitChar(_jsn) {
+  if (myChart !== null)
+    myChart.destroy();
+  
+  var ctx = document.getElementById('myChart').getContext('2d');
+
+  var jsonRet = _jsn;
+
+  const dateOpts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'};
+  
+  var tpNow = new Date();
+  tpNow.setMinutes(0);
+  var strNow = new Date(tpNow.getTime() - (tpNow.getTimezoneOffset() * 60000)).toISOString();
+  strNow = `${strNow.slice(0, strNow.lastIndexOf(":"))}`;
+
+  myChart = new Chart(ctx, {
+      type: 'line',
+      scaleShowValues: true,
+      data: {
+          labels: jsonRet[1]['hourly']['time'],
+          datasets: [
+          {
+            label: 'Temperature',
+            yAxisID: 'A',
+            borderColor: 'rgba(0,0,0,0.5)',
+            data: jsonRet[1]['hourly']['temperature_2m'],
+            unit: '°C',
+            fill: false,
+            tension: 0.5,
+            order: 0,
+            pointBackgroundColor: function(context) {
+              var index = context.dataIndex;
+              var value = context.dataset.data[index];
+              if (value >= 40) 
+                return '#DD4740';
+              else if (value >= 30) 
+                return '#E1766F';
+              else if (value >= 20) 
+                return '#ED9F8D';
+              else if (value >= 10) 
+                return '#57C4F6';
+              else if (value >= 0) 
+                return '#1BABF3';
+              else
+                return '#208AF6';
+            }
+          },
+          {
+            label: 'Pluviometrie',
+            yAxisID: 'B',
+            backgroundColor: 'rgba(0,100,255,0.33)',
+            data: jsonRet[1]['hourly']['precipitation'],
+            unit: 'mm/h',
+            order: 1
+          },
+          {
+            label: 'Couverture nuageuse',
+            yAxisID: 'C',
+            backgroundColor: 'rgba(225,225,225,1)',
+            data: jsonRet[1]['hourly']['cloudcover'],
+            unit: '%',
+            hidden: true,
+            order: 3
+          },
+          {
+            label: 'Vitesse du vent',
+            yAxisID: 'D',
+            backgroundColor: 'rgba(0,0,0,0.5)',
+            data: jsonRet[1]['hourly']['windspeed_10m'],
+            unit: 'km/h',
+            hidden: true,
+            order: 2
+          },
+          {
+            label: 'Indice UV',
+            yAxisID: 'E',
+            backgroundColor: '#d616e0',
+            data: jsonRet[2]['hourly']['uv_index'],
+            unit: '',
+            hidden: true,
+            order: 4,
+            fill: false,
+            pointBackgroundColor: function(context) {
+              var index = context.dataIndex;
+              var value = context.dataset.data[index];
+              if (value >= 11) 
+              return 'rgb(107, 73, 200)';
+              else if (value >= 8)
+                return 'rgb(216, 0, 29)';
+              else if (value >= 6)
+                return 'rgb(248, 89, 0)';
+              else if (value >= 3)
+              return 'rgb(247, 228, 0)';
+              else
+              return 'rgb(78, 180, 0)';
+            }
+          },
+          
+          {
+            label: 'Monoxyde de carbone',
+            yAxisID: 'G',
+            backgroundColor: 'rgba(50,0,0,0.5)',
+            data: jsonRet[2]['hourly']['carbon_monoxide'],
+            unit: '\u03BCg/m\u0033',
+            hidden: true,
+            order: 11
+          },
+          {
+            label: 'Ozone',
+            yAxisID: 'G',
+            backgroundColor: 'rgba(160,0,0,0.5)',
+            data: jsonRet[2]['hourly']['ozone'],
+            unit: '\u03BCg/m\u0033',
+            hidden: true,
+            order: 10
+          },
+          {
+            label: 'Poussière du Sahara',
+            yAxisID: 'G',
+            backgroundColor: 'rgba(150,0,0,0.5)',
+            data: jsonRet[2]['hourly']['dust'],
+            unit: '\u03BCg/m\u0033',
+            hidden: true,
+            order: 12
+          },
+          {
+            label: 'PM 10',
+            yAxisID: 'G',
+            backgroundColor: 'rgba(200,0,0,0.5)',
+            data: jsonRet[2]['hourly']['ozone'],
+            unit: '\u03BCg/m\u0033',
+            hidden: true,
+            order: 13
+          },
+          {
+            label: 'PM 2,5',
+            yAxisID: 'G',
+            backgroundColor: 'rgba(255,0,0,0.5)',
+            data: jsonRet[2]['hourly']['dust'],
+            unit: '\u03BCg/m\u0033',
+            hidden: true,
+            order: 14
+          },          
+
+          {
+            label: "Pollen d'herbe",
+            yAxisID: 'F',
+            backgroundColor: 'rgba(0,42,0,0.5)',
+            data: jsonRet[2]['hourly']['grass_pollen'],
+            unit: 'Grains/m\u0033',
+            hidden: true,
+            order: 20
+          },
+          {
+            label: 'Pollen de bouleau',
+            yAxisID: 'F',
+            backgroundColor: 'rgba(0,84,0,0.5)',
+            data: jsonRet[2]['hourly']['birch_pollen'],
+            unit: 'Grains/m\u0033',
+            hidden: true,
+            order: 21
+          },
+          {
+            label: "Pollen d'aulne",
+            yAxisID: 'F',
+            backgroundColor: 'rgba(0,126,0,0.5)',
+            data: jsonRet[2]['hourly']['alder_pollen'],
+            unit: 'Grains/m\u0033',
+            hidden: true,
+            order: 22
+          },
+          {
+            label: "Pollen d'armoise",
+            yAxisID: 'F',
+            backgroundColor: 'rgba(0,168,0,0.5)',
+            data: jsonRet[2]['hourly']['mugwort_pollen'],
+            unit: 'Grains/m\u0033',
+            hidden: true,
+            order: 23
+          },
+          {
+            label: "Pollen d'olivier",
+            yAxisID: 'F',
+            backgroundColor: 'rgba(0,210,0,0.5)',
+            data: jsonRet[2]['hourly']['olive_pollen'],
+            unit: 'Grains/m\u0033',
+            hidden: true,
+            order: 24
+          },
+          {
+            label: "Pollen d'ambroisie",
+            yAxisID: 'F',
+            backgroundColor: 'rgba(0,252,0,0.5)',
+            data: jsonRet[2]['hourly']['ragweed_pollen'],
+            unit: 'Grains/m\u0033',
+            hidden: true,
+            order: 25
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        interaction: {
+          intersect: false,
+          mode: 'index',
+        },
+        plugins: {
+          annotation: {
+            annotations: {
+              line1: {
+                type: 'line',
+                xMin: strNow,
+                xMax: strNow,
+                borderColor: 'rgb(255, 99, 132)',
+                borderWidth: 2,
+              }
+            }
+          },
+          tooltip: {
+            enabled: false,
+            external: function(context) {
+                // Tooltip Element
+                let tooltipEl = document.getElementById('chartjs-tooltip');
+
+                // Create element on first render
+                if (!tooltipEl) {
+                    tooltipEl = document.createElement('div');
+                    tooltipEl.id = 'chartjs-tooltip';
+                    tooltipEl.innerHTML = '<table></table>';
+                    tooltipEl.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+                    tooltipEl.style.color = 'rgba(255, 255, 255, 1.0)';
+                    tooltipEl.style.padding = '20px';
+                    tooltipEl.style.borderRadius = '20px';
+                    document.body.appendChild(tooltipEl);
+                }
+
+                // Hide if no tooltip
+                const tooltipModel = context.tooltip;
+                if (tooltipModel.opacity === 0) {
+                    tooltipEl.style.opacity = 0;
+                    return;
+                }
+
+                // Set caret Position
+                tooltipEl.classList.remove('above', 'below', 'no-transform');
+                if (tooltipModel.yAlign) {
+                    tooltipEl.classList.add(tooltipModel.yAlign);
+                } else {
+                    tooltipEl.classList.add('no-transform');
+                }
+
+                function getBody(bodyItem) {
+                    return bodyItem.lines;
+                }
+
+                // Set Text
+                if (tooltipModel.body) {
+                    const titleLines = tooltipModel.title || [];
+                    const bodyLines = tooltipModel.body.map(getBody);
+
+                    let innerHtml = '<thead>';
+
+                    titleLines.forEach(function(title) {
+                        var dateTp = new Date(context['tooltip']['dataPoints'][0].label);
+                        dateFormat = dateTp.toLocaleDateString('fr-FR', dateOpts);
+                        dateFormat = dateFormat.charAt(0).toUpperCase() + dateFormat.slice(1);
+                        innerHtml += '<tr><th>' + dateFormat + '</th></tr>';
+                    });
+                    innerHtml += '</thead>';
+                    
+                    let weatherIcn = '\uf075';
+                    let weatherStr = '';
+                    let indexID = parseInt(tooltipModel['$context']['tooltip']['dataPoints'][0]['dataIndex']);
+                    let codIcon = parseInt(jsonRet[1]['hourly']['weathercode'][indexID]);
+                    let IsDay = false;
+                    let iIndexDay = Math.floor(indexID / 24);
+                    if (new Date(jsonRet[1]['hourly']['time'][indexID]) > new Date(jsonRet[1]['daily']['sunrise'][iIndexDay])
+                      && new Date(jsonRet[1]['hourly']['time'][indexID]) < new Date(jsonRet[1]['daily']['sunset'][iIndexDay]))
+                      IsDay = true;
+                    switch(codIcon) {
+                      case  0: weatherStr = 'Ciel clair';                    weatherIcn = (IsDay ? '\uf00d' : '\uf02e'); break;
+                      case  1: weatherStr = 'Principalement clair';          weatherIcn = (IsDay ? '\uf00c' : '\uf081'); break;
+                      case  2: weatherStr = 'Partiellement nuageux';         weatherIcn = (IsDay ? '\uf002' : '\uf086'); break;
+                      case  3: weatherStr = 'Ciel couvert';                  weatherIcn = '\uf041'; break;
+                      case 45: weatherStr = 'Brouillard';                    weatherIcn = '\uf014'; break;
+                      case 48: weatherStr = 'Brouillard givrant';            weatherIcn = '\uf014'; break;
+                      case 51: weatherStr = 'Bruine (légère)';               weatherIcn = (IsDay ? '\uf00b' : '\uf039'); break;
+                      case 56: weatherStr = 'Bruine verglaçante (légère)';   weatherIcn = (IsDay ? '\uf00b' : '\uf039'); break;
+                      case 53: weatherStr = 'Bruine (modérée)';              weatherIcn = (IsDay ? '\uf00b' : '\uf039'); break;
+                      case 55: weatherStr = 'Bruine (dense)';                weatherIcn = '\uf01c'; break;
+                      case 57: weatherStr = 'Bruine verglaçante (dense)';    weatherIcn = (IsDay ? '\uf00b' : '\uf039'); break;
+                      case 61: weatherStr = 'Pluie (légère)';                weatherIcn = (IsDay ? '\uf009' : '\uf029'); break;
+                      case 66: weatherStr = 'Pluie verglaçante (légère)';    weatherIcn = (IsDay ? '\uf009' : '\uf029'); break;
+                      case 63: weatherStr = 'Pluie (modérée)';               weatherIcn = '\uf01a'; break;
+                      case 65: weatherStr = 'Pluie (forte)';                 weatherIcn = '\uf019'; break;
+                      case 67: weatherStr = 'Pluie verglaçante (forte)';     weatherIcn = '\uf01a'; break;
+                      case 71: weatherStr = 'Chute de neige (légère)';       weatherIcn = (IsDay ? '\uf0b2' : '\uf0b4'); break;
+                      case 73: weatherStr = 'Chute de neige (modérée)';      weatherIcn = (IsDay ? '\uf00a' : '\uf02a'); break;
+                      case 75: weatherStr = 'Chute de neige (forte)';        weatherIcn = '\uf01b'; break;
+                      case 80: weatherStr = 'Averses de pluie (légères)';    weatherIcn = (IsDay ? '\uf009' : '\uf029'); break;
+                      case 81: weatherStr = 'Averses de pluie (modérées)';   weatherIcn = (IsDay ? '\uf006' : '\uf026'); break;
+                      case 82: weatherStr = 'Averses de pluie (violentes)';  weatherIcn = (IsDay ? '\uf008' : '\uf028'); break;
+                      case 85: weatherStr = 'Averses de neige (légères)';    weatherIcn = (IsDay ? '\uf00a' : '\uf02a'); break;
+                      case 86: weatherStr = 'Averses de neige (fortes)';     weatherIcn = '\uf01b'; break;
+                      case 77: weatherStr = 'Neige en grains';               weatherIcn = (IsDay ? '\uf004' : '\uf024'); break;
+                      case 95: weatherStr = 'Orage (léger ou modéré)';       weatherIcn = '\uf01e'; break;
+                      case 96: weatherStr = 'Orage (grêle légère)';          weatherIcn = (IsDay ? '\uf068' : '\uf06a'); break;
+                      case 99: weatherStr = 'Orage (grêle forte)';           weatherIcn = '\uf01d'; break;
+                    }
+                    innerHtml += `<div style="margin:15px 15px 15px 0px;font-size:15px;">${weatherStr}</div>`;
+                    innerHtml += `<div style="display:inline;"><div style="display:inline-block;margin-right:35px;font-family:weathericons;font-size:50px;vertical-align:top;">${weatherIcn}</div>`;
+                    innerHtml += '<tbody style="display:inline;vertical-align:top;">';
+                    bodyLines.forEach(function(body, i) {
+                        const colors = tooltipModel.labelColors[i];
+                        const squareIndicator = `<div style="background-color:${colors.backgroundColor};width:10px;height:10px;display:inline-block;margin-right:5px;"></div>`;
+                        let style = 'color: white;';
+                        const span = '<span style="' + style + '">' + body + ' ' + tooltipModel['$context']['tooltip']['dataPoints'][i]['dataset']['unit'] + '</span>';
+                        innerHtml += '<tr><td>' + squareIndicator + span + '</td></tr>';
+                    });
+                    innerHtml += '</tbody>';
+                    innerHtml += `<div style="font-size:15px;font-family:weathericons;color:#EEAF61;">\uf051 ${jsonRet[1]['daily']['sunrise'][iIndexDay].substr(11)}</div>`;
+                    innerHtml += `<div style="font-size:15px;font-family:weathericons;color:#CE4993;">\uf052 ${jsonRet[1]['daily']['sunset'][iIndexDay].substr(11)}</div>`;
+                    innerHtml += '</div>';
+
+                    let tableRoot = tooltipEl.querySelector('table');
+                    tableRoot.innerHTML = innerHtml;
+                }
+
+                const position = context.chart.canvas.getBoundingClientRect();
+                const bodyFont = Chart.helpers.toFont(tooltipModel.options.bodyFont);
+
+                // Display, position, and set styles for font
+                tooltipEl.style.opacity = 1;
+                tooltipEl.style.position = 'absolute';
+                tooltipEl.style.left = position.left + window.pageXOffset + tooltipModel.caretX + 'px';
+                tooltipEl.style.top = position.top + window.pageYOffset + tooltipModel.caretY + 'px';
+                tooltipEl.style.font = bodyFont.string;
+                tooltipEl.style.padding = tooltipModel.padding + 'px ' + tooltipModel.padding + 'px';
+                tooltipEl.style.pointerEvents = 'none';
+            }
+          },
+          legend: {
+            labels: {
+              usePointStyle: true,
+              filter: function(item, chart) {
+                return !chart.datasets[item.datasetIndex]['data'].every((val, i, arr) => val === null);
+              }
+            }
+          }
+        },
+        scales: {
+          xAxis: {
+            ticks: {
+              autoSkip: false,
+              maxRotation: 0,
+              minRotation: 0,
+              callback: function(value, index) {
+                if (index % 24 === 12) {
+                  const event = new Date(this.getLabelForValue(value));
+                  let strLine = event.toLocaleDateString('fr-FR', dateOpts)
+                  let strDate = strLine.substr(0, strLine.indexOf('à') - 1);
+                  return strDate.charAt(0).toUpperCase() + strDate.slice(1);
+
+                }
+                else
+                  return '';
+              }
+            },
+            grid: {
+              color: (context) => {
+                return context.index % 24 === 0 ? 'rgba(0, 0, 0, 0.2)' : 'rgba(0, 0, 0, 0)';
+              },
+              lineWidth: 2
+            }
+          },
+          A: {
+            type: 'linear',
+            position: 'left',
+            min: -5,
+            max: 45,
+            title: {
+              display: true,
+              text: 'Temperature (°C)'
+            }
+          },
+          B: {
+            type: 'linear',
+            position: 'right',
+            min: 0,
+            max: 10,
+            title: {
+              display: false,
+              text: 'Pluviometrie (mm/h)'
+            },
+            grid : {
+              display: false
+            },
+            display: false
+          },
+          C: {
+            type: 'linear',
+            position: 'right',
+            min: 0,
+            max: 100,
+            title: {
+              display: false,
+              text: 'Couverture nuageuse (%)'
+            },
+            grid : {
+              display: false
+            },
+            display: false
+          },
+          D: {
+            type: 'linear',
+            position: 'right',
+            min: 0,
+            max: 120,
+            title: {
+              display: false,
+              text: 'Vitesse du vent (km/h)'
+            },
+            grid : {
+              display: false
+            },
+            display: false
+          },
+          E: {
+            type: 'linear',
+            position: 'right',
+            min: 0,
+            max: 11,
+            title: {
+              display: false,
+              text: 'Indice UV'
+            },
+            grid : {
+              display: false
+            },
+            display: false
+          },
+          F: {
+            type: 'linear',
+            position: 'right',
+            min: 0,
+            max: 400,
+            title: {
+              display: false,
+              text: 'Pollen (Grains/m\u0033)'
+            },
+            grid : {
+              display: false
+            },
+            display: false
+          },
+          G: {
+            type: 'linear',
+            position: 'right',
+            min: 0,
+            max: 600,
+            title: {
+              display: false,
+              text: 'Particules (\u03BCg/m\u0033)'
+            },
+            grid : {
+              display: false
+            },
+            display: false
+          }
+        }
+      }
+  });
+}
+</script>
