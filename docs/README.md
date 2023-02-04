@@ -2,7 +2,7 @@
 Interface serverless mettant en forme les prévisions météorologiques fournies par l'API d'*[open-meteo.com](https://open-meteo.com/en)*.\
 Les prévisions étant mises à jour toutes les trois heures, le résultat de chaque ville est stocké dans le *localstorage* du navigateur pour être réutilisé pendant une heure — au-delà de quoi une nouvelle requête écrasera l'ancien résultat.
 
-**Météo** est utilisable à cette adresse : https://philjbt.github.io/meteo/
+**Météo** est utilisable à cette adresse : https://philjbt.github.io/Meteo/
 
 ![Preview](preview.gif)
 
