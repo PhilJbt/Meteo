@@ -240,11 +240,6 @@ window.addEventListener("load", function() {
     document.getElementById("city").value = urlParams.get('city');
     var event = new Event('change');
     document.getElementById("city").dispatchEvent(event);
-    
-    const nextURL = window.location.protocol + '//' + window.location.hostname + window.location.pathname + '?city=' + urlParams.get('city');
-    const nextTitle = 'Meteo de ' + urlParams.get('city');
-    const nextState = { additionalInformation: 'Meteo de ' + urlParams.get('city') };
-    window.history.pushState(nextState, nextTitle, nextURL);
   } 
   else
     document.getElementById("city").selectedIndex = 0;
@@ -254,6 +249,11 @@ async function ChangeSelect(_this) {
   if (_this.value.length === 0
   || document.querySelector(`#cities option[value='${_this.value}']`) === null)
     return;
+
+  const nextURL = window.location.protocol + '//' + window.location.hostname + window.location.pathname + '?city=' + _this.value;
+  const nextTitle = 'Meteo de ' + _this.value;
+  const nextState = { additionalInformation: 'Meteo de ' + _this.value };
+  window.history.pushState(nextState, nextTitle, nextURL);
 
   if (myChart !== null)
     myChart.destroy();
