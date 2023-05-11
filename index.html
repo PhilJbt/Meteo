@@ -235,7 +235,19 @@
 const hashCode = (str) => str.split('').reduce((s, c) => Math.imul(31, s) + c.charCodeAt(0) | 0, 0);
 
 window.addEventListener("load", function() {
-  document.getElementById("city").selectedIndex = 0;
+  const urlParams = new URLSearchParams(window.location.search); 
+  if (urlParams.get('city') !== null) {
+    document.getElementById("city").selectedIndex = urlParams.get('city');
+    var event = new Event('change');
+    document.getElementById("city").dispatchEvent(event);
+    
+    const nextURL = window.location.protocol + '//' + window.location.hostname + window.location.pathname + '?city=' + urlParams.get('city');
+    const nextTitle = 'Meteo de ' + urlParams.get('city');
+    const nextState = { additionalInformation: 'Meteo de ' + urlParams.get('city') };
+    window.history.pushState(nextState, nextTitle, nextURL);
+  } 
+  else
+    document.getElementById("city").selectedIndex = 0;
 });
 
 async function ChangeSelect(_this) {
