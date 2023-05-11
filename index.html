@@ -237,7 +237,7 @@ const hashCode = (str) => str.split('').reduce((s, c) => Math.imul(31, s) + c.ch
 window.addEventListener("load", function() {
   const urlParams = new URLSearchParams(window.location.search); 
   if (urlParams.get('city') !== null) {
-    document.getElementById("city").selectedIndex = urlParams.get('city');
+    document.getElementById("city").value = urlParams.get('city');
     var event = new Event('change');
     document.getElementById("city").dispatchEvent(event);
     
