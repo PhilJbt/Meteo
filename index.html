@@ -126,8 +126,17 @@ window.addEventListener("load", function() {
     instance.open();
   }
   else {
-    document.querySelector('#lat').value = urlParams.get('lat');
-    document.querySelector('#long').value = urlParams.get('long');
+    let event = document.createEvent("Event");
+    event.initEvent("focus", "onfocusin", true);
+    
+    let lat = document.querySelector('#lat');
+    lat.value = urlParams.get('lat');
+    lat.dispatchEvent(event);
+
+    let long = document.querySelector('#long');
+    long.value = urlParams.get('long');
+    long.dispatchEvent(event);
+
     citySelected();
   }
 });
@@ -138,11 +147,10 @@ function onSelectCity() {
     event.initEvent("focus", "onfocusin", true);
 
     let lat = document.querySelector('#lat');
-    let long = document.querySelector('#long');
-
     lat.value = dictCoords[document.querySelector('#autocomplete-input').value][0];
     lat.dispatchEvent(event);
 
+    let long = document.querySelector('#long');
     long.value = dictCoords[document.querySelector('#autocomplete-input').value][1];
     long.dispatchEvent(event);
   }
