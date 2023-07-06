@@ -299,9 +299,10 @@ function InitChar(_jsn) {
           {
             label: 'Pluviometrie',
             yAxisID: 'B',
-            backgroundColor: 'rgba(0,100,255,0.33)',
+            backgroundColor: 'rgb(0,100,255)',
             data: jsonRet[1]['hourly']['precipitation'],
             unit: 'mm/h',
+            filled: true,
             order: 1
           },
           {
