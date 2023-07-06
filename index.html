@@ -302,7 +302,6 @@ function InitChar(_jsn) {
             backgroundColor: 'rgb(0,100,255)',
             data: jsonRet[1]['hourly']['precipitation'],
             unit: 'mm/h',
-            filled: true,
             order: 1
           },
           {
@@ -311,7 +310,6 @@ function InitChar(_jsn) {
             backgroundColor: 'rgba(225,225,225,1)',
             data: jsonRet[1]['hourly']['cloudcover'],
             unit: '%',
-            filled: true,
             hidden: true,
             order: 3
           },
@@ -321,7 +319,6 @@ function InitChar(_jsn) {
             backgroundColor: 'rgba(0,0,0,0.5)',
             data: jsonRet[1]['hourly']['windspeed_10m'],
             unit: 'km/h',
-            filled: true,
             hidden: true,
             order: 2
           },
