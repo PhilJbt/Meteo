@@ -302,6 +302,7 @@ function InitChar(_jsn) {
             backgroundColor: 'rgb(0,100,255)',
             data: jsonRet[1]['hourly']['precipitation'],
             unit: 'mm/h',
+            fill: true,
             order: 1
           },
           {
@@ -310,15 +311,17 @@ function InitChar(_jsn) {
             backgroundColor: 'rgba(225,225,225,1)',
             data: jsonRet[1]['hourly']['cloudcover'],
             unit: '%',
+            fill: true,
             hidden: true,
             order: 3
           },
           {
             label: 'Vitesse du vent',
             yAxisID: 'D',
-            backgroundColor: 'rgba(0,0,0,0.5)',
+            backgroundColor: '#7f7f7f',
             data: jsonRet[1]['hourly']['windspeed_10m'],
             unit: 'km/h',
+            fill: true,
             hidden: true,
             order: 2
           },
