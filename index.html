@@ -52,7 +52,9 @@
     </div>
     <div>
       <div class="cont">
-        <span id="loader" class="loader"></span>
+        <div id="loader" class="loader-cont">
+          <span class="loader"></span>
+        </div>
         <canvas id="myChart" width="1440" height="800"></canvas>
       </div>
     </div>
@@ -208,7 +210,7 @@ async function citySelected() {
   if (myChart !== null)
     myChart.destroy();
 
-  document.getElementById("loader").style.display = 'inline-block';
+  document.getElementById("loader").style.display = 'grid';
 
   let strTownHash = hashCode(`${lat},${long}`);
   let objLastRec = JSON.parse(localStorage.getItem(strTownHash));
