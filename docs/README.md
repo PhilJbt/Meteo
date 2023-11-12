@@ -4,7 +4,7 @@ Les prévisions étant mises à jour toutes les trois heures, le résultat de ch
 
 **Météo** est utilisable à cette adresse : https://philjbt.github.io/Meteo/
 
-![Preview](preview.gif)
+![Preview](preview.png)
 
 Prévisions disponibles :
 - Lever du soleil
@@ -14,19 +14,6 @@ Prévisions disponibles :
 - Couverture nuageuse
 - Vitesse du vent à 10 mètres du sol
 - Code météorologique
-- Indice UV
-- Ozone
-- Monoxyde de carbone
-- Poussière du Sahara
-- Particulate fines (PM) 2,5 µm [^1]
-- Particulate fines (PM) 10 µm [^2]
-- Pollen d'herbe [^3]
-- Pollen de bouleau [^3]
-- Pollen d'armoise [^3]
-- Pollen d'ambroisie [^3]
-- Pollen d'aulne [^3]
-- Pollen d'olivier [^3]
+- Indice UV [^1]
 
-[^1]: Poussière du Sahara incluse
-[^2]: PM 2.5 incluses
-[^3]: Disponible uniquement pendant la saison pollinique, avec une prévision de 4 jours.
+[^1]: Disponible uniquement pendant la saison pollinique, avec une prévision de 4 jours.

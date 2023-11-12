@@ -3,12 +3,9 @@
   <head>
     <meta charset="UTF-8">
     <link rel="icon" type="image/png" href="res/favicon.png" />
-    <script src="res/dep/js/chart.min.js"></script>
-    <script src="res/dep/js/chartjs-plugin-annotation.min.js"></script>
+    <script src="res/dep/js/apexcharts.js"></script>
     <link rel="stylesheet" href="res/dep/css/materialize.min.css">
     <script src="res/dep/js/materialize.min.js"></script>
-    <link href="res/dep/css/material-icon.css" rel="stylesheet">
-    <link rel="stylesheet" href="res/dep/icn/weather-icons.css">
     <link rel="stylesheet" href="res/styles.css">
     <meta name="robots" content="noindex">
     <title>Météo</title>
@@ -24,29 +21,26 @@
           <div class="row">
             <div class="col s12">
               <div class="input-field col s12">
-                <i class="material-icons prefix">search</i>
                 <input type="text" id="autocomplete-input" class="autocomplete">
-                <label for="autocomplete-input">Utiliser les coordonnées d'une ville</label>
+                <label for="autocomplete-input"><img class="icn" src="res/dep/icn/search.svg" height="24px" width="24px" /> Utiliser les coordonnées d'une ville</label>
               </div>
             </div>
           </div>
           <div class="row">
             <div class="col s12">
               <div class="input-field col s6">
-                <i class="material-icons prefix">swap_vert</i>
                 <input id="lat" type="text">
-                <label for="lat">Latitude</label>
+                <label for="lat"><img class="icn" src="res/dep/icn/swap_vert.svg" height="24px" width="24px" /> Latitude</label>
               </div>
               <div class="input-field col s6">
-                <i class="material-icons prefix">swap_horiz</i>
                 <input id="long" type="text">
-                <label for="long">Longitude</label>
+                <label for="long"><img class="icn" src="res/dep/icn/swap_hori.svg" height="24px" width="24px" /> Longitude</label>
               </div>
             </div>
           </div>
         </div>
         <div class="modal-footer">
-          <a class="waves-effect waves-light btn" id="btn_apply" onclick="citySelected()"><i class="material-icons right">keyboard_arrow_right</i>Appliquer</a>
+          <a class="waves-effect waves-light btn" id="btn_apply" onclick="citySelected()"><img class="icn" src="res/dep/icn/arrow_right.svg" height="24px" width="24px" />Appliquer</a>
         </div>
       </div>
     </div>
@@ -55,7 +49,18 @@
         <div id="loader" class="loader-cont">
           <span class="loader"></span>
         </div>
-        <canvas id="myChart" width="1440" height="800"></canvas>
+        <div>
+          <button class="men-btn" data-min="0" data-max="168">Semaine</button>
+          <button class="men-btn" data-min="1" data-max="24" data-gap="0"></button>
+          <button class="men-btn" data-min="25" data-max="48" data-gap="1"></button>
+          <button class="men-btn" data-min="49" data-max="72" data-gap="2"></button>
+          <button class="men-btn" data-min="73" data-max="96" data-gap="3"></button>
+          <button class="men-btn" data-min="97" data-max="120" data-gap="4"></button>
+          <button class="men-btn" data-min="121" data-max="144" data-gap="5"></button>
+          <button class="men-btn" data-min="145" data-max="168" data-gap="6"></button>
+          <!-- <button class="btn-addserie disabled" onclick="addSerie('test')">TEST</button> -->
+        </div>
+        <div id="myChart"></div>
       </div>
     </div>
   </body>
@@ -69,26 +74,91 @@ const hashCode = (str) => str.split('').reduce((s, c) => Math.imul(31, s) + c.ch
 
 let dictCoords = {};
 
-window.addEventListener("load", function() {
-  // erase inputs values
-  document.querySelector('#autocomplete-input').value = '';
-  document.querySelector('#lat').value = '';
-  document.querySelector('#long').value = '';
+function addSerie(_serieName) {
+  let bParticles = false;
+  let name = '';
+  let key = '';
 
-  // bind the onchange trigger of the autocomplete to the onSelectCity() function
-  document.querySelector('#autocomplete-input').addEventListener("change", (event) => {
-    onSelectCity();
+  if (_serieName === 'test') {
+    name = 'Monoxye de carbone';
+    key = 'carbon_monoxide';
+    bParticles = true;
+  }
+
+  chart.appendSeries({
+    name: name,
+    data: objLastRec[2]['hourly'][key],
+    type: 'area',
+    animate: false,
+  }, false);
+
+  if (bParticles)
+    chart.updateOptions({
+      yaxis: {
+      min: 0,
+      max: 600,
+      opposite: true,
+      axisTicks: {
+        show: true
+      },
+      axisBorder: {
+        show: true,
+        color: "#eb4034"
+      },
+      labels: {
+        style: {
+          colors: "#eb4034"
+        }
+      },
+      title: {
+        text: name,
+        style: {
+          color: "#eb4034",
+          fontSize: '17px',
+          fontFamily: 'Helvetica, Arial, sans-serif',
+          fontWeight: 600,
+        }
+      }
+    }
   });
+  else
+    chart.updateOptions({
+      yaxis: {
+        min: 0,
+        max: 400,
+        opposite: true,
+        axisTicks: {
+          show: true
+        },
+        axisBorder: {
+          show: true,
+          color: "#359418"
+        },
+        labels: {
+          style: {
+            colors: "#359418"
+          }
+        },
+        title: {
+          text: name,
+          style: {
+            color: "#359418",
+            fontSize: '17px',
+            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontWeight: 600,
+          }
+        }
+      }
+    });
+}
 
-  // bind inputs longitude and latitude with the correcting function
-  document.querySelector('#lat').addEventListener("input", (event) => {
-    checkLongLat(event);
-  });
-  document.querySelector('#long').addEventListener("input", (event) => {
-    checkLongLat(event);
-  });
-
-
+let bCitiesLoaded = false;
+function loadCities() {
+  if (!bCitiesLoaded)
+    bCitiesLoaded = true;
+  else
+    return;
+  
   // load Json and fill autocomplete
   fetch('res/dat/cities.json')
     .then(response => {
@@ -115,16 +185,40 @@ window.addEventListener("load", function() {
     .catch(error => {
         console.error('Error: ', error);
     });
+}
+
+window.addEventListener("load", function() {
+  // erase inputs values
+  document.querySelector('#autocomplete-input').value = '';
+  document.querySelector('#lat').value = '';
+  document.querySelector('#long').value = '';
+
+  // bind the onchange trigger of the autocomplete to the onSelectCity() function
+  document.querySelector('#autocomplete-input').addEventListener("change", (event) => {
+    onSelectCity();
+  });
+
+  // bind inputs longitude and latitude with the correcting function
+  document.querySelector('#lat').addEventListener("input", (event) => {
+    checkLongLat(event);
+  });
+  document.querySelector('#long').addEventListener("input", (event) => {
+    checkLongLat(event);
+  });
+  
 
   // init modal
   var elems = document.querySelectorAll('.modal');
-  var instances = M.Modal.init(elems, {dismissible:false});
+  var instances = M.Modal.init(elems, {dismissible:true, onOpenStart: () => {
+    loadCities();
+  }});
 
   // force the user to choose a city
   // if there are no latitude and/or longitude params in the URL
   const urlParams = new URLSearchParams(window.location.search); 
   if (urlParams.get('lat') === null
   || urlParams.get('long') === null) {
+    loadCities();
     // open modal
     var instance = M.Modal.getInstance(elems[0]);
     instance.open();
@@ -169,6 +263,7 @@ function isLongLatNum(_str) {
 }
 
 let bRunning = false
+let objLastRec = undefined;
 async function citySelected() {
   let lat = document.querySelector('#lat').value;
   let long = document.querySelector('#long').value;
@@ -206,21 +301,22 @@ async function citySelected() {
   const nextTitle = 'Meteo';
   const nextState = { additionalInformation: 'Meteo' };
   window.history.pushState(nextState, nextTitle, nextURL);
-
-  if (myChart !== null)
-    myChart.destroy();
+  
+  if (chart !== null)
+    chart.destroy();
 
   document.getElementById("loader").style.display = 'grid';
 
   let strTownHash = hashCode(`${lat},${long}`);
-  let objLastRec = JSON.parse(localStorage.getItem(strTownHash));
+  objLastRec = JSON.parse(localStorage.getItem(strTownHash));
 
   if (objLastRec === null
   || Date.now() - parseInt(objLastRec[0]) >= 0) {
     M.toast({html: 'Dernière mise à jour : maintenant'});
     const resWeather = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&hourly=temperature_2m,precipitation,weathercode,cloudcover,windspeed_10m&daily=sunrise,sunset&timezone=Europe%2FParis`);
     let dataWeather = await resWeather.json();
-    const resAir = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${long}&hourly=uv_index,carbon_monoxide,ozone,dust,pm10,pm2_5,alder_pollen,birch_pollen,grass_pollen,mugwort_pollen,olive_pollen,ragweed_pollen&timezone=Europe%2FParis`);
+    //const resAir = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${long}&hourly=uv_index,carbon_monoxide,ozone,dust,pm10,pm2_5,alder_pollen,birch_pollen,grass_pollen,mugwort_pollen,olive_pollen,ragweed_pollen&timezone=Europe%2FParis`);
+    const resAir = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${long}&hourly=uv_index&timezone=Europe%2FParis`);
     let dataAir = await resAir.json();
 
     var arrData = [];
@@ -247,11 +343,1177 @@ async function citySelected() {
 
   document.getElementById('btn_apply').classList.remove('disabled');
 
+  document.querySelectorAll('btn-addserie').forEach((e, i) => {
+    e.classList.remove('disabled');
+  });
+
   bRunning = false;
 }
 
-var myChart = null;
+function stringdateToString(_strDate, _bHours = false) {
+  let date = new Date(_strDate);
+  const dateOpts = { weekday: 'long', month: 'short', day: 'numeric' };
+  if (_bHours)
+    dateOpts.hour = 'numeric';
+  return date.toLocaleDateString('fr-FR', dateOpts);
+}
+
+function colorTemp(_value) {
+  if (_value >= 40) 
+    return '#DD4740';
+  else if (_value >= 30) 
+    return '#E1766F';
+  else if (_value >= 20) 
+    return '#ED9F8D';
+  else if (_value >= 10) 
+    return '#57C4F6';
+  else if (_value >= 0) 
+    return '#1BABF3';
+  else
+    return '#208AF6';
+}
+
+function colorPrec(_value) {
+  if (_value === .0)
+    return 'green';
+  if (_value <= 1)
+    return 'yellow';
+  if (_value <= 2)
+    return 'orange';
+  if (_value <= 7)
+    return 'red';
+  else
+    return 'purple';
+}
+
+function colorWind(_value) {
+  if (_value === .0)
+    return 'green';
+  if (_value <= 25)
+    return 'yellow';
+  if (_value <= 40)
+    return 'orange';
+  if (_value <= 100)
+    return 'red';
+  else
+    return 'purple';
+}
+
+function colorCover(_value) {
+  if (_value === .0)
+    return 'green';
+  if (_value <= 25)
+    return 'yellow';
+  if (_value <= 50)
+    return 'orange';
+  if (_value <= 75)
+    return 'red';
+  else
+    return 'purple';
+}
+
+function getNow() {
+  var tzoffset = (new Date()).getTimezoneOffset() * 60000;
+  let date = (new Date(Date.now() - tzoffset));
+  date.setMinutes(0);
+  let strDate = date.toISOString();
+  return strDate.substr(0, strDate.indexOf('T') + 6);
+}
+
+function getSunrise(_jsn, _dayId) {
+  let timeSunrise = _jsn[1]['daily']['sunrise'][_dayId];
+  timeSunrise = timeSunrise.substr(timeSunrise.indexOf('T') + 1);
+  return  timeSunrise;
+}
+
+function getSunset(_jsn, _dayId) {
+  let timeSunrise = _jsn[1]['daily']['sunset'][_dayId];
+  timeSunrise = timeSunrise.substr(timeSunrise.indexOf('T') + 1);
+  return  timeSunrise;
+}
+
+function getWeatherCode(_jsn, _index) {
+  let weatherStr = '';
+  switch(parseInt(_jsn[1]['hourly']['weathercode'][_index])) {
+      case  0: weatherStr = 'Ciel clair';                   break;
+      case  1: weatherStr = 'Principalement clair';         break;
+      case  2: weatherStr = 'Partiellement nuageux';        break;
+      case  3: weatherStr = 'Ciel couvert';                 break;
+      case 45: weatherStr = 'Brouillard';                   break;
+      case 48: weatherStr = 'Brouillard givrant';           break;
+      case 51: weatherStr = 'Bruine (légère)';              break;
+      case 56: weatherStr = 'Bruine verglaçante (légère)';  break;
+      case 53: weatherStr = 'Bruine (modérée)';             break;
+      case 55: weatherStr = 'Bruine (dense)';               break;
+      case 57: weatherStr = 'Bruine verglaçante (dense)';   break;
+      case 61: weatherStr = 'Pluie (légère)';               break;
+      case 66: weatherStr = 'Pluie verglaçante (légère)';   break;
+      case 63: weatherStr = 'Pluie (modérée)';              break;
+      case 65: weatherStr = 'Pluie (forte)';                break;
+      case 67: weatherStr = 'Pluie verglaçante (forte)';    break;
+      case 71: weatherStr = 'Chute de neige (légère)';      break;
+      case 73: weatherStr = 'Chute de neige (modérée)';     break;
+      case 75: weatherStr = 'Chute de neige (forte)';       break;
+      case 80: weatherStr = 'Averses de pluie (légères)';   break;
+      case 81: weatherStr = 'Averses de pluie (modérées)';  break;
+      case 82: weatherStr = 'Averses de pluie (violentes)'; break;
+      case 85: weatherStr = 'Averses de neige (légères)';   break;
+      case 86: weatherStr = 'Averses de neige (fortes)';    break;
+      case 77: weatherStr = 'Neige en grains';              break;
+      case 95: weatherStr = 'Orage (léger ou modéré)';      break;
+      case 96: weatherStr = 'Orage (grêle légère)';         break;
+      case 99: weatherStr = 'Orage (grêle forte)';          break;
+    }
+    return weatherStr;
+}
+
+var chart = null;
 function InitChar(_jsn) {
+  console.log(_jsn);
+
+  const units = [
+    '°C', // temperature_2m
+    'mm/h', // precipitation
+    '%', // cloudcover
+    'km/h', // windspeed_10m
+    '', // uv_index
+    'μg/m³', // carbon_monoxide
+    'μg/m³', // dust
+    'μg/m³', // ozone
+    'μg/m³', // pm10
+    'μg/m³', // pm2_5
+    'grains/m³', // alder_pollen
+    'grains/m³', // birch_pollen
+    'grains/m³', // grass_pollen
+    'grains/m³', // mugwort_pollen
+    'grains/m³', // olive_pollen
+    'grains/m³', // ragweed_pollen
+  ];
+
+  // fill the name and bind to chart functions the menu buttons
+  document.querySelectorAll('.men-btn').forEach((div) => {
+    div.addEventListener('click', function(e) {
+      chart.zoomX(parseInt(div.getAttribute('data-min')), parseInt(div.getAttribute('data-max')));
+    });
+    
+    if (div.getAttribute('data-gap') !== null)
+      div.innerHTML = stringdateToString(_jsn[1]['daily']['time'][div.getAttribute('data-gap')]);
+  });
+
+  document.querySelector('.men-btn[data-min="0"][data-max="168"]').focus({'focusVisible': true});
+  
+  if (chart !== null)
+    chart.destroy();
+
+  let oMin = Array.from({ length: 7 }, () => ({ v: Number.MAX_SAFE_INTEGER, x: null })),
+      oMax = Array.from({ length: 7 }, () => ({ v: Number.MIN_SAFE_INTEGER, x: null }));
+  let oMinMax = [];
+  for (let i = 0; i < 7; ++i) {
+    const shift = i * 24;
+    const arr = _jsn[1]['hourly']['temperature_2m'].slice(shift, 23 + shift);
+
+    arr.forEach((value, index) => {
+      if (value < oMin[i].v) {
+        oMin[i].x = shift + index;
+        oMin[i].v = value;
+      }
+      if (value > oMax[i].v) {
+        oMax[i].x = shift + index;
+        oMax[i].v = value;
+      }
+    });
+  }
+  oMin.forEach((e, i) => {
+    oMinMax.push(e.x);
+  });
+  oMax.forEach((e, i) => {
+    oMinMax.push(e.x);
+  });
+
+  let markers = [];
+  _jsn[1]['hourly']['temperature_2m'].forEach((value, index) => {
+    markers.push({
+      seriesIndex: 0,
+      dataPointIndex: index,
+      fillColor: colorTemp(value),
+      strokeColor: 'transparent',
+      size: 5,
+      shape: "circle" // "circle" | "square" | "rect"
+    });
+  });
+
+  var options = {
+    fill: {
+      colors: undefined,
+      opacity: 0.9,
+      type: ['solid', 'solid', 'pattern', 'pattern'],
+      gradient: {
+          shade: 'dark',
+          type: "vertical",
+          shadeIntensity: 0.5,
+          gradientToColors: undefined,
+          inverseColors: true,
+          opacityFrom: 1,
+          opacityTo: 0,
+          stops: [0, 50, 100],
+          colorStops: []
+      },
+      image: {
+          src: [],
+          width: undefined,
+          height: undefined
+      },
+      pattern: {
+          style: ['verticalLines', 'verticalLines', 'verticalLines', 'horizontalLines'],
+          width: 6,
+          height: 6,
+          strokeWidth: 2,
+      },
+    },
+    markers: {
+      strokeWidth: 0,
+      size: 5,
+      hover: {
+        size: 6,
+      }
+      //discrete: markers,
+    },
+    chart: {
+      height: '600px',
+      //type: "line",
+      stacked: false,
+      // events: {
+      //   xAxisLabelClick: function(event, chartContext, config) {
+      //     console.log('e');
+      //   },
+      // },
+      animations: {
+        enabled: false
+      },
+      toolbar: {
+        show: false,
+        offsetX: 0,
+        offsetY: 0,
+        tools: {
+          download: true,
+          selection: false,
+          zoom: false,
+          zoomin: false,
+          zoomout: false,
+          pan: false,
+          reset: true | '<img src="/static/icons/reset.png" width="20">',
+          customIcons: []
+        },
+        export: {
+          csv: {
+            filename: undefined,
+            columnDelimiter: ',',
+            headerCategory: 'category',
+            headerValue: 'value',
+            dateFormatter(timestamp) {
+              return new Date(timestamp).toDateString()
+            }
+          },
+          svg: {
+            filename: undefined,
+          },
+          png: {
+            filename: undefined,
+          }
+        },
+        //autoSelected: 'selection' 
+      },
+    },
+    colors: [
+      "#444", "#04597d",
+      "#a3a3a3", "#737373", "#0f0",
+      "#eb4034", "#eb4034", "#eb4034", "#eb4034", "#eb4034",
+      "#359418", "#359418", "#359418", "#359418", "#359418", "#359418",
+    ],
+    series: [
+      {
+        name: "Température",
+        data: _jsn[1]['hourly']['temperature_2m'],
+        type: 'line',
+      },
+      {
+        name: "Pluviométrie",
+        data: _jsn[1]['hourly']['precipitation'],
+        type: 'area',
+      },
+      {
+        name: "Couverture nuageuse",
+        data: _jsn[1]['hourly']['cloudcover'],
+        type: 'area',
+      },
+      {
+        name: "Vitesse du vent",
+        data: _jsn[1]['hourly']['windspeed_10m'],
+        type: 'area',
+      },
+      {
+        name: "Indice UV",
+        data: _jsn[2]['hourly']['uv_index'],
+        type: 'line',
+      },
+      // {
+      //   name: "Monoxye de carbone",
+      //   data: _jsn[2]['hourly']['carbon_monoxide'],
+      //   type: 'area',
+      // },
+      // {
+      //   name: "Poussière du Sahara",
+      //   data: _jsn[2]['hourly']['dust'],
+      //   type: 'area',
+      // },
+      // {
+      //   name: "Ozone",
+      //   data: _jsn[2]['hourly']['ozone'],
+      //   type: 'area',
+      // },
+      // {
+      //   name: "Particules PM10",
+      //   data: _jsn[2]['hourly']['pm10'],
+      //   type: 'area',
+      // },
+      // {
+      //   name: "Particules PM2.5",
+      //   data: _jsn[2]['hourly']['pm2_5'],
+      //   type: 'area',
+      // },
+      // {
+      //   name: "Pollen d'aulne",
+      //   data: _jsn[2]['hourly']['alder_pollen'],
+      //   type: 'area',
+      // },
+      // {
+      //   name: "Pollen de bouleau",
+      //   data: _jsn[2]['hourly']['birch_pollen'],
+      //   type: 'area',
+      // },
+      // {
+      //   name: "Pollen de graminées",
+      //   data: _jsn[2]['hourly']['grass_pollen'],
+      //   type: 'area',
+      // },
+      // {
+      //   name: "Pollen d'armoise",
+      //   data: _jsn[2]['hourly']['mugwort_pollen'],
+      //   type: 'area',
+      // },
+      // {
+      //   name: "Pollen d'olivier",
+      //   data: _jsn[2]['hourly']['olive_pollen'],
+      //   type: 'area',
+      // },
+      // {
+      //   name: "Pollen d'ambroisie",
+      //   data: _jsn[2]['hourly']['ragweed_pollen'],
+      //   type: 'area',
+      // },
+    ],
+    stroke: {
+      width: [1, 4, 0, 0]
+    },
+    plotOptions: {
+      bar: {
+        columnWidth: "20%"
+      }
+    },
+    dataLabels: {
+      enabled: true,
+      enabledOnSeries: [0, 1],
+      offsetY: -10,
+      formatter: function (val, opts) {
+        let bShow = false;
+        
+        if (opts.seriesIndex === 0
+        && oMinMax.includes(opts.dataPointIndex))
+            bShow = true;
+        else if (opts.seriesIndex === 1
+        && val > .4)
+            bShow = true;
+
+        return bShow ? val : '';
+      },
+      // style: {
+      //     fontSize: '14px',
+      //     fontFamily: 'Helvetica, Arial, sans-serif',
+      //     fontWeight: 'bold',
+      //     colors: ['#000']
+      // },
+      // background: {
+      //   enabled: false,
+      //   dropShadow: {
+      //     enabled: false,
+      //   }
+      // },
+      // dropShadow: {
+      //     enabled: false,
+      // },
+    },
+    xaxis: {
+      type: 'category',
+      tickAmount: 1,
+      categories: _jsn[1]['hourly']['time'],
+      axisTicks: {
+          show: false,
+      },
+      labels: {
+            show: true,
+            rotate: 0,
+            hideOverlappingLabels: true,
+            showDuplicates: false,
+            trim: false,
+            minHeight: undefined,
+            maxHeight: undefined,
+            style: {
+                colors: 'transparent',
+                fontSize: '0px',
+                fontFamily: 'Helvetica, Arial, sans-serif',
+                fontWeight: 700,
+                cssClass: 'apexcharts-xaxis-label',
+            },
+            offsetX: 0,
+            offsetY: 0,
+            // format: undefined,
+            // formatter: undefined,
+            // datetimeUTC: true,
+            // datetimeFormatter: {
+            //     year: 'yyyy',
+            //     month: "MMM 'yy",
+            //     day: 'dd MMM',
+            //     hour: 'HH:mm',
+            // },
+        },
+        tooltip: {
+            enabled: true,
+            formatter: function(val, opts) {
+              return `${stringdateToString(_jsn[1]['hourly']['time'][opts.dataPointIndex], true)}<br/>${getWeatherCode(_jsn, opts.dataPointIndex)}`;
+            },
+            offsetY: 0,
+            style: {
+              fontSize: '15px',
+              fontFamily: 0,
+            },
+            // onDatasetHover: {
+            //   highlightDataSeries: true,
+            // },
+        },
+    },
+    yaxis: [
+      {
+        min: -10,
+        max: 45,
+        axisTicks: {
+          show: true
+        },
+        axisBorder: {
+          show: true,
+          color: "#444"
+        },
+        labels: {
+          style: {
+            colors: "#444"
+          }
+        },
+        title: {
+          text: "Température",
+          style: {
+            color: "#444",
+            fontSize: '17px',
+            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontWeight: 600,
+          }
+        }
+      },
+      {
+        min: 0,
+        max: 20,
+        axisTicks: {
+          show: true
+        },
+        axisBorder: {
+          show: true,
+          color: "#04597d"
+        },
+        labels: {
+          style: {
+            colors: "#04597d"
+          }
+        },
+        title: {
+          text: "Pluviométrie",
+          style: {
+            color: "#04597d",
+            fontSize: '17px',
+            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontWeight: 600,
+          }
+        }
+      },
+      {
+        min: 0,
+        max: 100,
+        opposite: true,
+        axisTicks: {
+          show: true
+        },
+        axisBorder: {
+          show: true,
+          color: "#a3a3a3"
+        },
+        labels: {
+          style: {
+            colors: "#a3a3a3"
+          }
+        },
+        title: {
+          text: "Couverture nuageuse",
+          style: {
+            color: "#a3a3a3",
+            fontSize: '17px',
+            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontWeight: 600,
+          }
+        }
+      },
+      {
+        min: 0,
+        max: 120,
+        opposite: true,
+        axisTicks: {
+          show: true
+        },
+        axisBorder: {
+          show: true,
+          color: "#737373"
+        },
+        labels: {
+          style: {
+            colors: "#737373"
+          }
+        },
+        title: {
+          text: "Vitesse du vent",
+          style: {
+            color: "#737373",
+            fontSize: '17px',
+            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontWeight: 600,
+          }
+        }
+      },
+      {
+        min: 0,
+        max: 11,
+        opposite: true,
+        axisTicks: {
+          show: true
+        },
+        axisBorder: {
+          show: true,
+          color: "green"
+        },
+        labels: {
+          style: {
+            colors: "green"
+          }
+        },
+        title: {
+          text: "Indice UV",
+          style: {
+            color: "green",
+            fontSize: '17px',
+            fontFamily: 'Helvetica, Arial, sans-serif',
+            fontWeight: 600,
+          }
+        }
+      },
+      // {
+      //   min: 0,
+      //   max: 600,
+      //   opposite: true,
+      //   axisTicks: {
+      //     show: true
+      //   },
+      //   axisBorder: {
+      //     show: true,
+      //     color: "#eb4034"
+      //   },
+      //   labels: {
+      //     style: {
+      //       colors: "#eb4034"
+      //     }
+      //   },
+      //   title: {
+      //     text: "Monoxye de carbone",
+      //     style: {
+      //       color: "#eb4034",
+      //       fontSize: '17px',
+      //       fontFamily: 'Helvetica, Arial, sans-serif',
+      //       fontWeight: 600,
+      //     }
+      //   }
+      // },
+      // {
+      //   min: 0,
+      //   max: 600,
+      //   opposite: true,
+      //   axisTicks: {
+      //     show: true
+      //   },
+      //   axisBorder: {
+      //     show: true,
+      //     color: "#eb4034"
+      //   },
+      //   labels: {
+      //     style: {
+      //       colors: "#eb4034"
+      //     }
+      //   },
+      //   title: {
+      //     text: "Poussière du Sahara",
+      //     style: {
+      //       color: "#eb4034",
+      //       fontSize: '17px',
+      //       fontFamily: 'Helvetica, Arial, sans-serif',
+      //       fontWeight: 600,
+      //     }
+      //   }
+      // },
+      // {
+      //   min: 0,
+      //   max: 600,
+      //   opposite: true,
+      //   axisTicks: {
+      //     show: true
+      //   },
+      //   axisBorder: {
+      //     show: true,
+      //     color: "#eb4034"
+      //   },
+      //   labels: {
+      //     style: {
+      //       colors: "#eb4034"
+      //     }
+      //   },
+      //   title: {
+      //     text: "Ozone",
+      //     style: {
+      //       color: "#eb4034",
+      //       fontSize: '17px',
+      //       fontFamily: 'Helvetica, Arial, sans-serif',
+      //       fontWeight: 600,
+      //     }
+      //   }
+      // },
+      // {
+      //   min: 0,
+      //   max: 600,
+      //   opposite: true,
+      //   axisTicks: {
+      //     show: true
+      //   },
+      //   axisBorder: {
+      //     show: true,
+      //     color: "#eb4034"
+      //   },
+      //   labels: {
+      //     style: {
+      //       colors: "#eb4034"
+      //     }
+      //   },
+      //   title: {
+      //     text: "Particules PM10",
+      //     style: {
+      //       color: "#eb4034",
+      //       fontSize: '17px',
+      //       fontFamily: 'Helvetica, Arial, sans-serif',
+      //       fontWeight: 600,
+      //     }
+      //   }
+      // },
+      // {
+      //   min: 0,
+      //   max: 600,
+      //   opposite: true,
+      //   axisTicks: {
+      //     show: true
+      //   },
+      //   axisBorder: {
+      //     show: true,
+      //     color: "#eb4034"
+      //   },
+      //   labels: {
+      //     style: {
+      //       colors: "#eb4034"
+      //     }
+      //   },
+      //   title: {
+      //     text: "Particules PM2.5",
+      //     style: {
+      //       color: "#eb4034",
+      //       fontSize: '17px',
+      //       fontFamily: 'Helvetica, Arial, sans-serif',
+      //       fontWeight: 600,
+      //     }
+      //   }
+      // },
+      // {
+      //   min: 0,
+      //   max: 400,
+      //   opposite: true,
+      //   axisTicks: {
+      //     show: true
+      //   },
+      //   axisBorder: {
+      //     show: true,
+      //     color: "#359418"
+      //   },
+      //   labels: {
+      //     style: {
+      //       colors: "#359418"
+      //     }
+      //   },
+      //   title: {
+      //     text: "Pollen d'aulne",
+      //     style: {
+      //       color: "#359418",
+      //       fontSize: '17px',
+      //       fontFamily: 'Helvetica, Arial, sans-serif',
+      //       fontWeight: 600,
+      //     }
+      //   }
+      // },
+      // {
+      //   min: 0,
+      //   max: 400,
+      //   opposite: true,
+      //   axisTicks: {
+      //     show: true
+      //   },
+      //   axisBorder: {
+      //     show: true,
+      //     color: "#359418"
+      //   },
+      //   labels: {
+      //     style: {
+      //       colors: "#359418"
+      //     }
+      //   },
+      //   title: {
+      //     text: "Pollen de bouleau",
+      //     style: {
+      //       color: "#359418",
+      //       fontSize: '17px',
+      //       fontFamily: 'Helvetica, Arial, sans-serif',
+      //       fontWeight: 600,
+      //     }
+      //   }
+      // },
+      // {
+      //   min: 0,
+      //   max: 400,
+      //   opposite: true,
+      //   axisTicks: {
+      //     show: true
+      //   },
+      //   axisBorder: {
+      //     show: true,
+      //     color: "#359418"
+      //   },
+      //   labels: {
+      //     style: {
+      //       colors: "#359418"
+      //     }
+      //   },
+      //   title: {
+      //     text: "Pollen de graminées",
+      //     style: {
+      //       color: "#359418",
+      //       fontSize: '17px',
+      //       fontFamily: 'Helvetica, Arial, sans-serif',
+      //       fontWeight: 600,
+      //     }
+      //   }
+      // },
+      // {
+      //   min: 0,
+      //   max: 400,
+      //   opposite: true,
+      //   axisTicks: {
+      //     show: true
+      //   },
+      //   axisBorder: {
+      //     show: true,
+      //     color: "#359418"
+      //   },
+      //   labels: {
+      //     style: {
+      //       colors: "#359418"
+      //     }
+      //   },
+      //   title: {
+      //     text: "Pollen d'armoise",
+      //     style: {
+      //       color: "#359418",
+      //       fontSize: '17px',
+      //       fontFamily: 'Helvetica, Arial, sans-serif',
+      //       fontWeight: 600,
+      //     }
+      //   }
+      // },
+      // {
+      //   min: 0,
+      //   max: 400,
+      //   opposite: true,
+      //   axisTicks: {
+      //     show: true
+      //   },
+      //   axisBorder: {
+      //     show: true,
+      //     color: "#359418"
+      //   },
+      //   labels: {
+      //     style: {
+      //       colors: "#359418"
+      //     }
+      //   },
+      //   title: {
+      //     text: "Pollen d'olivier",
+      //     style: {
+      //       color: "#359418",
+      //       fontSize: '17px',
+      //       fontFamily: 'Helvetica, Arial, sans-serif',
+      //       fontWeight: 600,
+      //     }
+      //   }
+      // },
+      // {
+      //   min: 0,
+      //   max: 400,
+      //   opposite: true,
+      //   axisTicks: {
+      //     show: true
+      //   },
+      //   axisBorder: {
+      //     show: true,
+      //     color: "#359418"
+      //   },
+      //   labels: {
+      //     style: {
+      //       colors: "#359418"
+      //     }
+      //   },
+      //   title: {
+      //     text: "Pollen d'ambroisie",
+      //     style: {
+      //       color: "#359418",
+      //       fontSize: '17px',
+      //       fontFamily: 'Helvetica, Arial, sans-serif',
+      //       fontWeight: 600,
+      //     }
+      //   }
+      // },
+    ],
+    annotations: {
+      xaxis: [
+        {
+          x: getNow(),
+          strokeDashArray: 5,
+          borderColor: '#00f',
+          fillColor: '#000',
+          opacity: .0,
+          offsetX: 0,
+          offsetY: 0,
+          label: {
+              borderColor: 'transparent',
+              borderWidth: 0,
+              borderRadius: 0,
+              text: undefined,
+              textAnchor: 'start',
+              position: 'top',
+              orientation: 'vertical',
+              offsetX: 0,
+              offsetY: 0,
+              mouseEnter: undefined,
+              mouseLeave: undefined,
+              click: undefined,
+              style: {
+                  background: '#fff',
+                  color: '#000',
+                  fontSize: '15px',
+                  fontWeight: 700,
+                  fontFamily: undefined,
+                  cssClass: 'apexcharts-xaxis-annotation-label',
+              },
+          },
+        },
+      ],
+    },
+    tooltip: {
+      enabled: true,
+      followCursor: true,
+      shared: false,
+      intersect: false,
+      y: {
+          show: true,
+          formatter: function(value, { series, seriesIndex, dataPointIndex, w }) {
+            return `${value} ${units[seriesIndex]}`
+          },
+      },
+      //enabledOnSeries: [0, 1],
+      // custom: function({series, seriesIndex, dataPointIndex, w}) {
+      //   let innerHtml = '';
+      //   let weatherIcn = '\uf075';
+      //   let weatherStr = '';
+      //   let codIcon = parseInt(_jsn[1]['hourly']['weathercode'][dataPointIndex]);
+      //   let IsDay = false;
+      //   let iIndexDay = Math.floor(dataPointIndex / 24);
+      //   if (new Date(_jsn[1]['hourly']['time'][dataPointIndex]) > new Date(_jsn[1]['daily']['sunrise'][iIndexDay])
+      //     && new Date(_jsn[1]['hourly']['time'][dataPointIndex]) < new Date(_jsn[1]['daily']['sunset'][iIndexDay]))
+      //     IsDay = true;
+      //   switch(codIcon) {
+      //     case  0: weatherStr = 'Ciel clair';                    weatherIcn = (IsDay ? '\uf00d' : '\uf02e'); break;
+      //     case  1: weatherStr = 'Principalement clair';          weatherIcn = (IsDay ? '\uf00c' : '\uf081'); break;
+      //     case  2: weatherStr = 'Partiellement nuageux';         weatherIcn = (IsDay ? '\uf002' : '\uf086'); break;
+      //     case  3: weatherStr = 'Ciel couvert';                  weatherIcn = '\uf041'; break;
+      //     case 45: weatherStr = 'Brouillard';                    weatherIcn = '\uf014'; break;
+      //     case 48: weatherStr = 'Brouillard givrant';            weatherIcn = '\uf014'; break;
+      //     case 51: weatherStr = 'Bruine (légère)';               weatherIcn = (IsDay ? '\uf00b' : '\uf039'); break;
+      //     case 56: weatherStr = 'Bruine verglaçante (légère)';   weatherIcn = (IsDay ? '\uf00b' : '\uf039'); break;
+      //     case 53: weatherStr = 'Bruine (modérée)';              weatherIcn = (IsDay ? '\uf00b' : '\uf039'); break;
+      //     case 55: weatherStr = 'Bruine (dense)';                weatherIcn = '\uf01c'; break;
+      //     case 57: weatherStr = 'Bruine verglaçante (dense)';    weatherIcn = (IsDay ? '\uf00b' : '\uf039'); break;
+      //     case 61: weatherStr = 'Pluie (légère)';                weatherIcn = (IsDay ? '\uf009' : '\uf029'); break;
+      //     case 66: weatherStr = 'Pluie verglaçante (légère)';    weatherIcn = (IsDay ? '\uf009' : '\uf029'); break;
+      //     case 63: weatherStr = 'Pluie (modérée)';               weatherIcn = '\uf01a'; break;
+      //     case 65: weatherStr = 'Pluie (forte)';                 weatherIcn = '\uf019'; break;
+      //     case 67: weatherStr = 'Pluie verglaçante (forte)';     weatherIcn = '\uf01a'; break;
+      //     case 71: weatherStr = 'Chute de neige (légère)';       weatherIcn = (IsDay ? '\uf0b2' : '\uf0b4'); break;
+      //     case 73: weatherStr = 'Chute de neige (modérée)';      weatherIcn = (IsDay ? '\uf00a' : '\uf02a'); break;
+      //     case 75: weatherStr = 'Chute de neige (forte)';        weatherIcn = '\uf01b'; break;
+      //     case 80: weatherStr = 'Averses de pluie (légères)';    weatherIcn = (IsDay ? '\uf009' : '\uf029'); break;
+      //     case 81: weatherStr = 'Averses de pluie (modérées)';   weatherIcn = (IsDay ? '\uf006' : '\uf026'); break;
+      //     case 82: weatherStr = 'Averses de pluie (violentes)';  weatherIcn = (IsDay ? '\uf008' : '\uf028'); break;
+      //     case 85: weatherStr = 'Averses de neige (légères)';    weatherIcn = (IsDay ? '\uf00a' : '\uf02a'); break;
+      //     case 86: weatherStr = 'Averses de neige (fortes)';     weatherIcn = '\uf01b'; break;
+      //     case 77: weatherStr = 'Neige en grains';               weatherIcn = (IsDay ? '\uf004' : '\uf024'); break;
+      //     case 95: weatherStr = 'Orage (léger ou modéré)';       weatherIcn = '\uf01e'; break;
+      //     case 96: weatherStr = 'Orage (grêle légère)';          weatherIcn = (IsDay ? '\uf068' : '\uf06a'); break;
+      //     case 99: weatherStr = 'Orage (grêle forte)';           weatherIcn = '\uf01d'; break;
+      //   }
+      //   innerHtml += `<div style="margin:15px 15px 15px 0px;font-size:15px;">${weatherStr}</div>`;
+      //   innerHtml += `<div style="display:inline;"><div style="display:inline-block;margin-right:35px;font-family:weathericons;font-size:50px;vertical-align:top;">${weatherIcn}</div>`;
+      //   /*
+      //   innerHtml += '<tbody style="display:inline;vertical-align:top;">';
+      //   bodyLines.forEach(function(body, i) {
+      //       const colors = tooltipModel.labelColors[i];
+      //       const squareIndicator = `<div style="background-color:${colors.backgroundColor};width:10px;height:10px;display:inline-block;margin-right:5px;"></div>`;
+      //       let style = 'color: white;';
+      //       const span = '<span style="' + style + '">' + body + ' ' + tooltipModel['$context']['tooltip']['dataPoints'][i]['dataset']['unit'] + '</span>';
+      //       innerHtml += '<tr><td>' + squareIndicator + span + '</td></tr>';
+      //   });
+      //   innerHtml += '</tbody>';
+      //   */
+      //   innerHtml += '</div>';
+
+      //   let fragHTML = '<div class="arrow_box" style="padding:20px;">';
+
+      //   // global weather
+      //   //fragHTML += `<h5>${stringdateToString(_jsn[1]['hourly']['time'][dataPointIndex], true)}</5h>`;
+      //   fragHTML += innerHtml;
+        
+      //   // temperature
+      //   if (!chart.w.globals.collapsedSeriesIndices.includes(0))
+      //     fragHTML += 
+      //     `<div class="tooltip-item" style="background-color:${colorTemp(_jsn[1]['hourly']['temperature_2m'][dataPointIndex])}">
+      //       <img src="res/dep/icn/google-icons/thermostat.svg" class="tooltip-icon" />
+      //       <div class="tooltip-value">${_jsn[1]['hourly']['temperature_2m'][dataPointIndex]} ${_jsn[1]['hourly_units']['temperature_2m']}</div>
+      //     </div>`;
+
+      //   // precipitation
+      //   if (!chart.w.globals.collapsedSeriesIndices.includes(1))
+      //     fragHTML += 
+      //     `<div class="tooltip-item" style="background-color:${colorPrec(_jsn[1]['hourly']['precipitation'][dataPointIndex])}">
+      //       <img src="res/dep/icn/google-icons/rain.svg" class="tooltip-icon" />
+      //       <div class="tooltip-value">${_jsn[1]['hourly']['precipitation'][dataPointIndex]} ${_jsn[1]['hourly_units']['precipitation']}</div>
+      //     </div>`;
+
+      //   // wind
+      //   if (!chart.w.globals.collapsedSeriesIndices.includes(12))
+      //     fragHTML += 
+      //     `<div class="tooltip-item" style="background-color:${colorWind(_jsn[1]['hourly']['windspeed_10m'][dataPointIndex])}">
+      //         <img src="res/dep/icn/google-icons/wind.svg" class="tooltip-icon" />
+      //         <div class="tooltip-value">${_jsn[1]['hourly']['windspeed_10m'][dataPointIndex]} ${_jsn[1]['hourly_units']['windspeed_10m']}</div>
+      //     </div>`;
+
+      //   // cloud cover
+      //   if (!chart.w.globals.collapsedSeriesIndices.includes(3))
+      //     fragHTML += 
+      //     `<div class="tooltip-item" style="background-color:${colorCover(_jsn[1]['hourly']['cloudcover'][dataPointIndex])}">
+      //         <img src="res/dep/icn/google-icons/cloud.svg" class="tooltip-icon" />`+
+      //         `<div class="tooltip-value">${_jsn[1]['hourly']['cloudcover'][dataPointIndex]} ${_jsn[1]['hourly_units']['cloudcover']}</div>
+      //     </div>`;
+
+      //   fragHTML += '</div>';
+
+      //   return fragHTML;
+      // },
+      x: {
+        show: false
+      },
+    },
+    legend: {
+      horizontalAlign: "center",
+      fontSize: '17px',
+      fontFamily: 'Helvetica, Arial',
+      fontWeight: 600,
+    }
+  };
+
+  chart = new ApexCharts(document.querySelector("#myChart"), options);
+  
+  chart.render();
+  chart.hideSeries('Couverture nuageuse');
+  chart.hideSeries('Vitesse du vent');
+  chart.hideSeries('Indice UV');
+  // chart.hideSeries('Monoxye de carbone');
+  // chart.hideSeries('Poussière du Sahara');
+  // chart.hideSeries('Ozone');
+  // chart.hideSeries('Particules PM10');
+  // chart.hideSeries('Particules PM2.5');
+  // chart.hideSeries("Pollen d'aulne");
+  // chart.hideSeries('Pollen de bouleau');
+  // chart.hideSeries('Pollen de graminées');
+  // chart.hideSeries("Pollen d'armoise");
+  // chart.hideSeries("Pollen d'olivier");
+  // chart.hideSeries("Pollen d'ambroisie");
+
+  for (let i = 0; i < 7; ++i) {
+    const shift = i * 24;
+    chart.addXaxisAnnotation({
+      x: _jsn[1]['hourly']['time'][shift],
+      x2: _jsn[1]['hourly']['time'][shift + (i == 6 ? 23 : 24)],
+      borderColor: '#000',
+      fillColor: 'transparent',
+      //strokeDashArray: 0,
+      opacity: 1,//(i % 2 == 0 ? .0 : .1),
+      offsetX: 0,
+      offsetY: 0,
+      label: {
+        text: stringdateToString(_jsn[1]['hourly']['time'][shift]),
+        textAnchor: 'middle',
+        position: 'top',
+        orientation: 'vertical',
+        offsetX: 30,
+        offsetY: 0,
+        borderWidth: 0,
+        borderColor: 'transparent',
+        style: {
+          background: 'transparent',
+          color: '#000',
+          fontSize: '15px',
+          fontWeight: 700,
+          cssClass: 'apexcharts-xaxis-annotation-label',
+        },
+      },
+    });
+    chart.addXaxisAnnotation({
+      x: _jsn[1]['daily']['time'][i]+'T00:00',
+      borderColor: 'transparent',
+      opacity: .0,
+      offsetX: 0,
+      offsetY: 0,
+      label: {
+        text: getSunrise(_jsn, i),
+        textAnchor: 'center',
+        position: 'top',
+        orientation: 'horizontal',
+        offsetX: 30,
+        offsetY: 25,
+        borderColor: 'transparent',
+        style: {
+          background: 'transparent',
+          color: '#EEAF61',
+          fontSize: '15px',
+          fontWeight: 700,
+        },
+      },
+    });
+    chart.addXaxisAnnotation({
+      x: _jsn[1]['daily']['time'][i]+'T00:00',
+      borderColor: 'transparent',
+      opacity: .0,
+      offsetX: 0,
+      offsetY: 0,
+      label: {
+        text: getSunset(_jsn, i),
+        textAnchor: 'center',
+        position: 'top',
+        orientation: 'horizontal',
+        offsetX: 30,
+        offsetY: 45,
+        borderColor: 'transparent',
+        style: {
+          background: 'transparent',
+          color: '#CE4993',
+          fontSize: '15px',
+          fontWeight: 700,
+        },
+      },
+    });
+  }
+
+  // oMin.forEach((obj, ind) => {
+  //   const temperature = _jsn[1]['hourly']['temperature_2m'][obj.x];
+  //   chart.addPointAnnotation({
+  //     x: _jsn[1]['hourly']['time'][obj.x],
+  //     y: temperature,
+  //     seriesIndex: 0,
+  //     marker: {
+  //       strokeColor: '#208AF6',
+  //       fillColor: 'transparent',
+  //     },
+  //     label: {
+  //       borderColor: 'transparent',
+  //       text: temperature,
+  //       textAnchor: 'middle',
+  //       offsetY: 40,
+  //       style: {
+  //           background: 'transparent',
+  //           fontSize: '15px',
+  //           fontWeight: 700,
+  //       },
+  //     },
+  //   });
+  // });
+  // oMax.forEach((obj, ind) => {
+  //   const temperature = _jsn[1]['hourly']['temperature_2m'][obj.x];
+  //   chart.addPointAnnotation({
+  //     x: _jsn[1]['hourly']['time'][obj.x],
+  //     y: temperature,
+  //     seriesIndex: 0,
+  //     marker: {
+  //       strokeColor: '#DD4740',
+  //       fillColor: 'transparent',
+  //     },
+  //     label: {
+  //       borderColor: 'transparent',
+  //       text: temperature,
+  //       textAnchor: 'middle',
+  //       offsetY: 0,
+  //       style: {
+  //           background: 'transparent',
+  //           fontSize: '15px',
+  //           fontWeight: 700,
+  //       },
+  //     },
+  //   });
+  // });
+
+  /*
   if (myChart !== null)
     myChart.destroy();
   
@@ -726,5 +1988,6 @@ function InitChar(_jsn) {
         }
       }
   });
+  */
 }
 </script>
