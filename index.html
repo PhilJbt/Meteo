@@ -187,7 +187,7 @@ function loadCities() {
     });
 }
 
-window.addEventListener("load", function() {
+window.addEventListener('DOMContentLoaded', function() {
   // erase inputs values
   document.querySelector('#autocomplete-input').value = '';
   document.querySelector('#lat').value = '';
@@ -293,6 +293,7 @@ async function citySelected() {
     bRunning = true;
 
   document.getElementById('btn_apply').classList.add('disabled');
+  document.getElementById("loader").style.display = 'grid';
 
   // close modal
   M.Modal.getInstance(document.querySelectorAll('.modal')[0]).close();
@@ -305,8 +306,6 @@ async function citySelected() {
   if (chart !== null)
     chart.destroy();
 
-  document.getElementById("loader").style.display = 'grid';
-
   let strTownHash = hashCode(`${lat},${long}`);
   objLastRec = JSON.parse(localStorage.getItem(strTownHash));
 
@@ -315,8 +314,7 @@ async function citySelected() {
     M.toast({html: 'Dernière mise à jour : maintenant'});
     const resWeather = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&hourly=temperature_2m,precipitation,weathercode,cloudcover,windspeed_10m&daily=sunrise,sunset&timezone=Europe%2FParis`);
     let dataWeather = await resWeather.json();
-    //const resAir = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${long}&hourly=uv_index,carbon_monoxide,ozone,dust,pm10,pm2_5,alder_pollen,birch_pollen,grass_pollen,mugwort_pollen,olive_pollen,ragweed_pollen&timezone=Europe%2FParis`);
-    const resAir = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${long}&hourly=uv_index&timezone=Europe%2FParis`);
+    const resAir = await fetch(`https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${long}&hourly=uv_index,carbon_monoxide,ozone,dust,pm10,pm2_5,alder_pollen,birch_pollen,grass_pollen,mugwort_pollen,olive_pollen,ragweed_pollen&timezone=Europe%2FParis`);
     let dataAir = await resAir.json();
 
     var arrData = [];
@@ -339,13 +337,13 @@ async function citySelected() {
     InitChar(objLastRec);
   }
 
-  document.getElementById("loader").style.display = 'none';
-
   document.getElementById('btn_apply').classList.remove('disabled');
 
   document.querySelectorAll('btn-addserie').forEach((e, i) => {
     e.classList.remove('disabled');
   });
+
+  document.getElementById("loader").style.display = 'none';
 
   bRunning = false;
 }
